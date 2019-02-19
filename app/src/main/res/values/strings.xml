@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">worldClock</string>
+    <string name="add_label">追加する</string>
 </resources>
