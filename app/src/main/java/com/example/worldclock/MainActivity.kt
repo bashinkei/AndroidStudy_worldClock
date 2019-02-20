@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ListView
 import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
             //プリファレンスから保存しているタイムゾーンを取得する
             val pref = getSharedPreferences("prefs", Context.MODE_PRIVATE)
-            val timeZones = pref.getStringSet("time_zone", mutableSetOf())
+            val timeZones = pref.getStringSet("time_zone", mutableSetOf()).toMutableSet()
 
             //選択を追加
             timeZones.add(tiemZone)
@@ -69,6 +70,28 @@ class MainActivity : AppCompatActivity() {
 
         val list = findViewById<ListView>(R.id.clockList)
         list.adapter = TimeZoneAdpter(this, timeZones.toTypedArray())
+
+        //listを選択したときに削除するように
+        list.setOnItemClickListener { _, _, position, _ ->
+            val listId = list.adapter.getItem(position)
+
+            //プリファレンス取得
+            val pref = getSharedPreferences("prefs", Context.MODE_PRIVATE)
+            val timeZones = pref.getStringSet("time_zone", mutableSetOf()).toMutableSet()
+
+            //プリファレンスから削除
+            timeZones.remove(listId)
+
+            //プリファレンスに保存
+            pref.edit().putStringSet("time_zone", timeZones).apply()
+
+            //Toastで表示
+            Toast.makeText(this, "削除しました♪", Toast.LENGTH_SHORT).show()
+
+            //listの再表示
+            showWorldClocks()
+
+        }
     }
 
     companion object {
